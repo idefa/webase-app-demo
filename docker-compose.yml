@@ -5,7 +5,7 @@ services:
     working_dir: /data
     command: -c  config.ini
     volumes:
-      - ./fisco/nodes/127.0.0.1/node0/:/data/
+      - ./fisco/nodes/172.25.0.2/node0/:/data/
     ports:
       - "30300:30300"
       - "8545:8545"
@@ -20,11 +20,11 @@ services:
     working_dir: /data
     command: -c  config.ini
     volumes:
-      - ./fisco/nodes/127.0.0.1/node1/:/data/
+      - ./fisco/nodes/172.25.0.3/node0/:/data/
     ports:
-      - "30301:30301"
-      - "8546:8546"
-      - "20201:20201"
+      - "30301:30300"
+      - "8546:8545"
+      - "20201:20200"
     networks:
       web_network:
         ipv4_address: 172.25.0.3
@@ -35,11 +35,11 @@ services:
     working_dir: /data
     command: -c  config.ini
     volumes:
-      - ./fisco/nodes/127.0.0.1/node2/:/data/
+      - ./fisco/nodes/172.25.0.4/node0/:/data/
     ports:
-      - "30302:30302"
-      - "8547:8547"
-      - "20202:20202"
+      - "30302:30300"
+      - "8547:8545"
+      - "20202:20200"
     networks:
       web_network:
         ipv4_address: 172.25.0.4
@@ -56,11 +56,11 @@ services:
       SDK_CHANNEL_PORT: 20200
       KEY_SERVER: webase-sign:5004
     volumes:
-      - ./fisco/nodes/127.0.0.1/sdk:/dist/sdk
-      - ./webase/webase-deploy/webase-front/log:/dist/log
-      - ./webase/webase-deploy/webase-front/h2:/h2
-      - ./webase/webase-deploy/docker/script/wait-for-it.sh:/wait-for-it.sh
-      - ./webase/webase-deploy/docker/script/front-start.sh:/start.sh
+      - ./fisco/nodes/172.25.0.2/sdk:/dist/sdk
+      - ./webase/webase-front/log:/dist/log
+      - ./webase/webase-front/h2:/h2
+      - ./webase/docker/script/wait-for-it.sh:/wait-for-it.sh
+      - ./webase/docker/script/front-start.sh:/start.sh
     depends_on:
       - webase-sign
     entrypoint: ["/wait-for-it.sh", "172.25.0.2:20200", "--timeout=10", "--strict", "--",  "bash", "/start.sh"]
@@ -83,9 +83,9 @@ services:
       WEBASE_DB_PWD: 123456
       ENCRYPT_TYPE: 0
     volumes:
-      - ./webase/webase-deploy/webase-node-mgr/log:/dist/log
-      - ./webase/webase-deploy/docker/script/wait-for-it.sh:/wait-for-it.sh
-      - ./webase/webase-deploy/docker/script/mgr-start.sh:/start.sh
+      - ./webase/webase-node-mgr/log:/dist/log
+      - ./webase/docker/script/wait-for-it.sh:/wait-for-it.sh
+      - ./webase/docker/script/mgr-start.sh:/start.sh
     depends_on:
       - webase-mysql
       - webase-sign
@@ -109,9 +109,9 @@ services:
       WEBASE_DB_UNAME: root
       WEBASE_DB_PWD: 123456
     volumes:
-      - ./webase/webase-deploy/webase-sign/log:/dist/log
-      - ./webase/webase-deploy/docker/script/wait-for-it.sh:/wait-for-it.sh
-      - ./webase/webase-deploy/docker/script/sign-start.sh:/start.sh
+      - ./webase/webase-sign/log:/dist/log
+      - ./webase/docker/script/wait-for-it.sh:/wait-for-it.sh
+      - ./webase/docker/script/sign-start.sh:/start.sh
     depends_on:
       - webase-mysql
     entrypoint: ["/wait-for-it.sh", "webase-mysql:3306", "--timeout=5", "--strict", "--", "bash", "/start.sh"]
@@ -125,10 +125,10 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ./webase/webase-deploy/webase-web/nginx-docker.conf:/data/webase-web/nginx/nginx.conf
-      - ./webase/webase-deploy/webase-web/log:/dist/log
-      - ./webase/webase-deploy/docker/script/wait-for-it.sh:/wait-for-it.sh
-      - ./webase/webase-deploy/docker/script/web-start.sh:/start.sh
+      - ./webase/nginx.conf:/data/webase-web/nginx/nginx.conf
+      - ./webase/webase-web/log:/usr/share/nginx/log
+      - ./webase/docker/script/wait-for-it.sh:/wait-for-it.sh
+      - ./webase/docker/script/web-start.sh:/start.sh
     depends_on:
       - webase-node-mgr
     entrypoint: ["/wait-for-it.sh", "webase-node-mgr:5001", "--timeout=30", "--", "bash", "/start.sh"]
@@ -144,26 +144,26 @@ services:
     ports:
       - "23306:3306"
     volumes:
-    - ./webase/webase-deploy/mysql:/var/lib/mysql
+    - ./webase/mysql:/var/lib/mysql
     # entrypoint: ["echo", "Service [mysql] disabled"]
     networks:
       web_network:
         ipv4_address: 172.25.0.9
 
 
-  webase-app-patient:
-    container_name: webase-app-patient
-    image: java:8
-    restart: always
-    privileged: true
-    command: java -jar /app/patients-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev
-    ports:
-      - "19092:9092"
-    volumes:
-      - ./app/patients/target:/app
-    networks:
-      web_network:
-        ipv4_address: 172.25.0.10
+  # webase-app-patient:
+  #   container_name: webase-app-patient
+  #   image: java:8
+  #   restart: always
+  #   privileged: true
+  #   command: java -jar /app/patients-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev
+  #   ports:
+  #     - "19092:9092"
+  #   volumes:
+  #     - ./app/patients/target:/app
+  #   networks:
+  #     web_network:
+  #       ipv4_address: 172.25.0.10
 
 networks:
   web_network:
