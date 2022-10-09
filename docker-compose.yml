@@ -151,19 +151,19 @@ services:
         ipv4_address: 172.25.0.9
 
 
-  # webase-app-patient:
-  #   container_name: webase-app-patient
-  #   image: java:8
-  #   restart: always
-  #   privileged: true
-  #   command: java -jar /app/patients-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev
-  #   ports:
-  #     - "19092:9092"
-  #   volumes:
-  #     - ./app/patients/target:/app
-  #   networks:
-  #     web_network:
-  #       ipv4_address: 172.25.0.10
+  webase-app-patient:
+    container_name: webase-app-patient
+    image: openjdk:8
+    restart: always
+    privileged: true
+    command: java -jar /app/patient-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev
+    ports:
+      - "8021:8021"
+    volumes:
+      - ./app/patient/target:/app
+    networks:
+      web_network:
+        ipv4_address: 172.25.0.10
 
 networks:
   web_network:

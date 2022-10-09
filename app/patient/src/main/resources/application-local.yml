@@ -1,0 +1,13 @@
+server:
+  servlet:
+    context-path: /api/bcos
+  port: 8021
+
+webaseapp:
+  nodeManagerUrl: "http://127.0.0.1:5001"
+  appKey: "wy3YACtL"
+  appSecret: "6chjkHTbj9eEH47ceA2Rtu6azWyFfVUe"
+  transferEncrypt: true
+  appIp: "172.25.0.1"
+  appPort: "8021"
+  appLink: "http://172.25.0.1:8021/api/bcos/swagger-ui.html"
